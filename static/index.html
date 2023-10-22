@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hello World</title>
-</head>
-<body>
-    body
-    <div>
-        {{.Test}}
-        {{.Test2}}
+  </head>
+  <body>
+    <div id="list">
+      {{range .Data}} {{block "list-element" .}}
+      <div>{{.Title}}</div>
+      <div>{{.Description}}</div>
+      {{end}} {{end}}
     </div>
 
-    <form  >
-        <input type="text" name="test" id="test">
-        <input type="text" name="test2" id="test2">
-        <button type="submit" hx-post="/post" hx-target="body">Submit</button>
+    <form hx-post="/post" hx-target="#list" hx-swap="beforeend" onsubmit="">
+      <input type="text" name="title" id="title" />
+      <input type="text" name="description" id="description" />
+      <button type="submit">Submit</button>
     </form>
-</body>
+  </body>
 </html>
-<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script
+  src="https://unpkg.com/htmx.org@1.9.6"
+  integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+  crossorigin="anonymous"
+></script>
