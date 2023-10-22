@@ -5,12 +5,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/KurobaneShin/go-htmx.git/database"
 	"github.com/gorilla/schema"
 )
+
 type Test struct {
 	Title  string
 	Description string
 }
+
 func main() {
 
 	mux := http.NewServeMux()
@@ -25,10 +28,10 @@ func main() {
 
 		t := template.Must(template.New("index.html").ParseFiles(templates...))
 
-		data := map[string][]Test {
-			"Data":{
-				{Title: "Title 1", Description: "Description 1"},
-			},
+    list:= database.GetList()
+
+		data := map[string][]database.ListItem {
+			"Data":list,
 		}
 
 		err := t.Execute(w, data)
@@ -42,7 +45,6 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
-
 
 
 func handlePost(w http.ResponseWriter, r *http.Request) {

@@ -1,0 +1,7 @@
+{
+  "bracketSameLine": false,
+  "singleAttributePerLine": true,
+  "printWidth": 80,
+  "endOfLine": "lf",
+  "proseWrap": "always"
+}
