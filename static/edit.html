@@ -1,44 +1,16 @@
-{{template "header.html"}}
-<div class="flex flex-row justify-between">
-  <div
-    id="list"
-    class="p-2 space-y-2 w-full"
-  >
-    {{range .Data}} {{block "list-element" .}}
-    <div
-      id="{{.Id}}"
-      class="flex flex-col bg-slate-100 rounded-xl dark:bg-slate-800 h-max p-2"
-      hx-target="this"
-      hx-swap="outerHTML"
-    >
-      <div class="flex justify-between">
-        <div class="text-sky-500 dark:text-sky-400">{{.Title}}</div>
-        <div>
-          <i
-            hx-get="/put/{{.Id}}"
-            class="ph-thin ph-cube"
-          >
-          </i>
-          <i
-            class="ph-thin ph-cube cursor-pointer"
-            hx-delete="/delete"
-            hx-confirm="certeza?"
-          ></i>
-        </div>
-      </div>
-      <div class="text-slate-700 dark:text-slate-500">{{.Description}}</div>
-    </div>
-    {{end}} {{end}}
-  </div>
-
+<div
+  hx-swap="outerHTML"
+  hx-target="this"
+>
   <form
-    hx-post="/post"
+    hx-post="/put/{{.Id}}"
     hx-target="#list"
     hx-swap="beforeend"
     class="p-2 space-y-2"
   >
     <label for="title"> title </label>
     <input
+      value="{{.Title}}"
       type="text"
       name="title"
       id="title"
@@ -46,6 +18,7 @@
     />
     <label for="description"> description </label>
     <input
+      value="{{.Description}}"
       type="text"
       name="description"
       id="description"
@@ -60,5 +33,3 @@
     </button>
   </form>
 </div>
-
-{{template "footer.html"}}

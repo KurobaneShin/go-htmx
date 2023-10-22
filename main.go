@@ -1,11 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/KurobaneShin/go-htmx.git/database"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
 )
 
@@ -16,7 +19,7 @@ type Test struct {
 
 func main() {
 
-	mux := http.NewServeMux()
+	mux := mux.NewRouter().StrictSlash(true)
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
@@ -41,7 +44,9 @@ func main() {
 		}
 	})
 
-	mux.HandleFunc("/post", handlePost)
+	mux.HandleFunc("/post", handlePost).Methods("Post")
+
+	mux.HandleFunc("/put/{id}", handlePut)
 
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
@@ -65,5 +70,27 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	err2 := t.Execute(w, data)
 	if err != nil {
 		log.Fatal(err2)
+	}
+}
+
+func handlePut(w http.ResponseWriter, r *http.Request) {
+
+	t := template.Must(template.ParseFiles("static/edit.html"))
+
+	id := mux.Vars(r)["id"]
+
+	castedId, castErr := strconv.ParseInt(id, 10, 64)
+
+	if castErr != nil {
+		panic(castErr)
+	}
+
+	item := database.ReadListItem(castedId)
+
+	fmt.Printf("%v", item)
+
+	err := t.Execute(w, item)
+	if err != nil {
+		log.Fatal(err)
 	}
 }
