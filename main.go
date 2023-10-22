@@ -10,7 +10,7 @@ import (
 )
 
 type Test struct {
-	Title  string
+	Title       string
 	Description string
 }
 
@@ -28,10 +28,10 @@ func main() {
 
 		t := template.Must(template.New("index.html").ParseFiles(templates...))
 
-    list:= database.GetList()
+		list := database.GetList()
 
-		data := map[string][]database.ListItem {
-			"Data":list,
+		data := map[string][]database.ListItem{
+			"Data": list,
 		}
 
 		err := t.Execute(w, data)
@@ -46,20 +46,21 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
-
 func handlePost(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	var data = Test{}
 
 	decoder := schema.NewDecoder()
 	err := decoder.Decode(&data, r.Form)
+
 	if err != nil {
 		panic(err)
 	}
 
+	listItem := database.InsertListItem(data.Title, &data.Description)
 
 	t := template.Must(template.ParseFiles("static/index.html"))
-	t.ExecuteTemplate(w,"list-element", data)
+	t.ExecuteTemplate(w, "list-element", listItem)
 
 	err2 := t.Execute(w, data)
 	if err != nil {

@@ -6,6 +6,7 @@
   >
     {{range .Data}} {{block "list-element" .}}
     <div
+      id="{{.Id}}"
       class="flex flex-col bg-slate-100 rounded-xl dark:bg-slate-800 h-max p-2"
     >
       <div class="text-sky-500 dark:text-sky-400">{{.Title}}</div>
