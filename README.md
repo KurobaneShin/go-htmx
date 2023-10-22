@@ -1,3 +1,3 @@
 ```
-go mod run main.go
+go run main.go
 ```
