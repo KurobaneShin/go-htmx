@@ -16,7 +16,14 @@ func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		t := template.Must(template.New("index.html").ParseFiles("static/index.html"))
+
+		templates := []string{
+			"static/header.html",
+			"static/index.html",
+			"static/footer.html",
+		}
+
+		t := template.Must(template.New("index.html").ParseFiles(templates...))
 
 		data := map[string][]Test {
 			"Data":{
