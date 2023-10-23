@@ -48,6 +48,8 @@ func main() {
 	mux.HandleFunc("/put/{id}", handlePutAction).Methods("Put")
 	mux.HandleFunc("/put/{id}", handlePutData)
 
+	mux.HandleFunc("/delete/{id}", handleDelete).Methods("Delete")
+
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
 
@@ -118,4 +120,16 @@ func handlePutAction(w http.ResponseWriter, r *http.Request) {
 
 	t := template.Must(template.ParseFiles("static/index.html"))
 	t.ExecuteTemplate(w, "list-element", listItem)
+}
+
+func handleDelete(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	castedId, castErr := strconv.ParseInt(id, 10, 64)
+
+	if castErr != nil {
+		panic(castErr)
+	}
+
+	database.DeleteListItem(castedId)
 }

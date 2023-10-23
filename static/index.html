@@ -21,7 +21,9 @@
           </i>
           <i
             class="ph-thin ph-cube cursor-pointer"
-            hx-delete="/delete"
+            hx-target="#item-{{.Id}}"
+            hx-swap="outerHTML"
+            hx-delete="/delete/{{.Id}}"
             hx-confirm="certeza?"
           ></i>
         </div>

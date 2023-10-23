@@ -110,3 +110,17 @@ func CheckError(err error) {
 		panic(err)
 	}
 }
+func DeleteListItem(id int64) {
+	db, connErr := GetConnection()
+	CheckError(connErr)
+	defer db.Close()
+	CheckError(connErr)
+
+	stmt, err := db.Prepare("DELETE FROM list WHERE id = $1")
+
+	CheckError(err)
+
+	_, e := stmt.Exec(id)
+
+	CheckError(e)
+}
