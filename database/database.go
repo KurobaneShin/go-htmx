@@ -90,6 +90,21 @@ func ReadListItem(id int64) ListItem {
 
 }
 
+func UpdateListItem(id int64, title string, description *string) {
+	db, connErr := GetConnection()
+	CheckError(connErr)
+	defer db.Close()
+	CheckError(connErr)
+
+	stmt, err := db.Prepare("UPDATE list SET title = $1, description = $2 WHERE id = $3")
+
+	CheckError(err)
+
+	_, e := stmt.Exec(title, description, id)
+
+	CheckError(e)
+}
+
 func CheckError(err error) {
 	if err != nil {
 		panic(err)

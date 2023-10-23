@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -46,7 +45,8 @@ func main() {
 
 	mux.HandleFunc("/post", handlePost).Methods("Post")
 
-	mux.HandleFunc("/put/{id}", handlePut)
+	mux.HandleFunc("/put/{id}", handlePutAction).Methods("Put")
+	mux.HandleFunc("/put/{id}", handlePutData)
 
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
@@ -73,7 +73,7 @@ func handlePost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handlePut(w http.ResponseWriter, r *http.Request) {
+func handlePutData(w http.ResponseWriter, r *http.Request) {
 
 	t := template.Must(template.ParseFiles("static/edit.html"))
 
@@ -87,10 +87,35 @@ func handlePut(w http.ResponseWriter, r *http.Request) {
 
 	item := database.ReadListItem(castedId)
 
-	fmt.Printf("%v", item)
-
 	err := t.Execute(w, item)
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func handlePutAction(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	var data = Test{}
+
+	decoder := schema.NewDecoder()
+	err := decoder.Decode(&data, r.Form)
+
+	if err != nil {
+		panic(err)
+	}
+
+	id := mux.Vars(r)["id"]
+
+	castedId, castErr := strconv.ParseInt(id, 10, 64)
+
+	if castErr != nil {
+		panic(castErr)
+	}
+
+	database.UpdateListItem(castedId, data.Title, &data.Description)
+
+	listItem := database.ListItem{Id: castedId, Title: data.Title, Description: &data.Description}
+
+	t := template.Must(template.ParseFiles("static/index.html"))
+	t.ExecuteTemplate(w, "list-element", listItem)
 }

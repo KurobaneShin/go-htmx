@@ -6,7 +6,7 @@
   >
     {{range .Data}} {{block "list-element" .}}
     <div
-      id="{{.Id}}"
+      id="item-{{.Id}}"
       class="flex flex-col bg-slate-100 rounded-xl dark:bg-slate-800 h-max p-2"
       hx-target="this"
       hx-swap="outerHTML"
