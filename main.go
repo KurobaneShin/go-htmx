@@ -17,11 +17,9 @@ type Test struct {
 }
 
 func main() {
-
 	mux := mux.NewRouter().StrictSlash(true)
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-
+	mux.HandleFunc("/", func(w http.ResponseWriter, _ *http.Request) {
 		templates := []string{
 			"static/header.html",
 			"static/index.html",
@@ -37,7 +35,6 @@ func main() {
 		}
 
 		err := t.Execute(w, data)
-
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -54,29 +51,30 @@ func main() {
 }
 
 func handlePost(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	var data = Test{}
+	if err := r.ParseForm(); err != nil {
+		panic(err)
+	}
+
+	data := Test{}
 
 	decoder := schema.NewDecoder()
-	err := decoder.Decode(&data, r.Form)
-
-	if err != nil {
+	if err := decoder.Decode(&data, r.Form); err != nil {
 		panic(err)
 	}
 
 	listItem := database.InsertListItem(data.Title, &data.Description)
 
 	t := template.Must(template.ParseFiles("static/index.html"))
-	t.ExecuteTemplate(w, "list-element", listItem)
+	if err := t.ExecuteTemplate(w, "list-element", listItem); err != nil {
+		log.Fatal(err)
+	}
 
-	err2 := t.Execute(w, data)
-	if err != nil {
-		log.Fatal(err2)
+	if err := t.Execute(w, data); err != nil {
+		log.Fatal(err)
 	}
 }
 
 func handlePutData(w http.ResponseWriter, r *http.Request) {
-
 	t := template.Must(template.ParseFiles("static/edit.html"))
 
 	id := mux.Vars(r)["id"]
@@ -96,12 +94,13 @@ func handlePutData(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlePutAction(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	var data = Test{}
+	if err := r.ParseForm(); err != nil {
+		panic(err)
+	}
+	data := Test{}
 
 	decoder := schema.NewDecoder()
 	err := decoder.Decode(&data, r.Form)
-
 	if err != nil {
 		panic(err)
 	}
@@ -119,10 +118,12 @@ func handlePutAction(w http.ResponseWriter, r *http.Request) {
 	listItem := database.ListItem{Id: castedId, Title: data.Title, Description: &data.Description}
 
 	t := template.Must(template.ParseFiles("static/index.html"))
-	t.ExecuteTemplate(w, "list-element", listItem)
+	if err := t.ExecuteTemplate(w, "list-element", listItem); err != nil {
+		log.Fatal(err)
+	}
 }
 
-func handleDelete(w http.ResponseWriter, r *http.Request) {
+func handleDelete(_ http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
 	castedId, castErr := strconv.ParseInt(id, 10, 64)

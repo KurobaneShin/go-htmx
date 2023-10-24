@@ -34,9 +34,9 @@ func GetConnection() (*sql.DB, error) {
 
 func GetList() []ListItem {
 	db, connErr := GetConnection()
-	defer db.Close()
 	CheckError(connErr)
 
+	defer db.Close()
 	rows, err := db.Query(`SELECT "id", "title", "description" from  "list"`)
 	CheckError(err)
 	defer rows.Close()
@@ -57,9 +57,9 @@ func GetList() []ListItem {
 
 func InsertListItem(title string, description *string) ListItem {
 	db, connErr := GetConnection()
-	defer db.Close()
 	CheckError(connErr)
 
+	defer db.Close()
 	stmt, err := db.Prepare("INSERT INTO list (title, description) VALUES ($1, $2)")
 
 	CheckError(err)
@@ -71,7 +71,6 @@ func InsertListItem(title string, description *string) ListItem {
 	id, _ := res.LastInsertId()
 
 	return ListItem{Id: id, Title: title, Description: description}
-
 }
 
 func ReadListItem(id int64) ListItem {
@@ -87,7 +86,6 @@ func ReadListItem(id int64) ListItem {
 	CheckError(err)
 
 	return item
-
 }
 
 func UpdateListItem(id int64, title string, description *string) {
@@ -110,6 +108,7 @@ func CheckError(err error) {
 		panic(err)
 	}
 }
+
 func DeleteListItem(id int64) {
 	db, connErr := GetConnection()
 	CheckError(connErr)
